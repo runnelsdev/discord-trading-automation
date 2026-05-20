@@ -3,7 +3,6 @@
 Subscription routing and operational automation framework for trading communities.
 
 > **Scope note:** This repository focuses on **operational workflow architecture** — subscription management, routing, and communication systems. It intentionally does **not** include proprietary trading strategies, trade logic, or any financial promises.
-
 ---
 
 ## Overview
@@ -35,13 +34,20 @@ A workflow-first automation layer that standardizes subscription lifecycle manag
 
 ## Architecture
 
-> _Insert architecture diagrams in `docs/` and reference them here._
+See [`docs/architecture.md`](docs/architecture.md) for the full subscription lifecycle, tier routing, and communications diagrams.
 
-```
-[ Subscription Event ] -> [ Routing Logic ] -> [ Discord Access Tiers ]
-                                 |
-                                 v
-                       [ Operational Dashboard ]
+```mermaid
+flowchart LR
+    Sub[Subscription Provider] --> Webhook[Webhook Receiver]
+    Webhook --> State[Subscription State Store]
+    State --> Router{Tier Router}
+    Router --> Tier1[Tier 1 Access]
+    Router --> Tier2[Tier 2 Access]
+    Router --> Tier3[Tier 3 Access]
+    Tier1 --> Discord[Discord Role Sync]
+    Tier2 --> Discord
+    Tier3 --> Discord
+    Discord --> Dash[Operational Dashboard]
 ```
 
 ## Workflow Example
@@ -59,7 +65,18 @@ A workflow-first automation layer that standardizes subscription lifecycle manag
 
 ## Screenshots
 
-> _Add workflow maps and operational dashboard visuals here._
+Workflow and dashboard visualizations are maintained as Mermaid diagrams in [`docs/architecture.md`](docs/architecture.md). Example: subscription lifecycle states.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Trial
+    Trial --> Active: Payment success
+    Active --> PastDue: Payment failed
+    PastDue --> Active: Recovery
+    PastDue --> Canceled: Grace period ends
+    Active --> Canceled: Member cancels
+    Canceled --> [*]
+```
 
 ## Lessons Learned
 
